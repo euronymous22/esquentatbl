@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reunião Triunfante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(#0a1532 60%, #2c95c0);
+            color: #FFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #jsi-fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Mudança aqui */
+        }
+
+        .container {
+            border-radius: 5px;
+            padding: 20px;
+            background-color: rgba(0, 64, 128, 0.7);
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .container img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 20px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #0074D9;
+            border: none;
+            color: #FFF;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0057a4;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            border: 1px solid #0074D9;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div id="jsi-fireworks-container"></div>
+    <img src="https://media.discordapp.net/attachments/741902398662115403/1147302158501417001/Imagem2-min.png?width=899&height=676" alt="Logo">
+    <div class="container">
+        <h2>Informe o seu setor para entrar na reunião</h2>
+        <form id="sectorForm">
+            <label for="sector">Setor:</label>
+            <input type="text" id="sector" name="sector" required>
+            <input type="submit" value="Enviar" class="btn">
+        </form>
+    </div>
+
+    <script>
+        var RENDERER = {
+    STAR_COUNT: 500,
+    init: function () {
+        this.setParameters();
+        this.reconstructMethod();
+        this.createStars();
+        this.render();
+    },
+    setParameters: function () {
+        this.$container = $('#jsi-fireworks-container');
+        this.width = this.$container.width();
+        this.height = this.$container.height();
+        this.context = $('<canvas />').attr({ width: this.width, height: this.height }).appendTo(this.$container).get(0).getContext('2d');
+        this.stars = [];
+        this.fireworks = [];
+        this.fireworkInterval = 50;
+        this.maxFireworkInterval = 90;
+    },
+    reconstructMethod: function () {
+        this.render = this.render.bind(this);
+    },
+    createStars: function () {
+        for (var i = 0; i < this.STAR_COUNT; i++) {
+            this.stars.push(new STAR(this.width, this.height, this.context));
+        }
+    },
+    render: function () {
+        requestAnimationFrame(this.render);
+        this.context.clearRect(0, 0, this.width, this.height);
+
+        for (var i = 0, length = this.stars.length; i < length; i++) {
+            this.stars[i].render();
+        }
+
+        for (var i = this.fireworks.length - 1; i >= 0; i--) {
+            if (!this.fireworks[i].render(this.context)) {
+                this.fireworks.splice(i, 1);
+            }
+        }
+
+        if (--this.fireworkInterval == 0) {
+            this.fireworks.push(new FIREWORK(this.width, this.height));
+            this.fireworkInterval = this.maxFireworkInterval;
+        }
+    }
+};
+
+var STAR = function (width, height, context) {
+    this.width = width;
+    this.height = height;
+    this.context = context;
+    this.init();
+};
+
+STAR.prototype = {
+    SIZE: 2,
+    SPEED: 0.005,
+    COLOR_CHANGE_SPEED: 0.005,
+    colors: ['#FFFFFF', '#DDDDFF', '#BBBBFF'],
+    init: function () {
+        this.x = Math.random() * this.width;
+        this.y = Math.random() * this.height;
+        this.vx = (Math.random() - 0.5) * this.SPEED;
+        this.vy = (Math.random() - 0.5) * this.SPEED;
+        this.currentColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.nextColorIndex = (this.colors.indexOf(this.currentColor) + 1) % this.colors.length;
+        this.changeRatio = 0;
+    },
+    render: function () {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.changeRatio += this.COLOR_CHANGE_SPEED;
+
+        if (this.changeRatio > 1) {
+            this.currentColor = this.colors[this.nextColorIndex];
+            this.nextColorIndex = (this.nextColorIndex + 1) % this.colors.length;
+            this.changeRatio = 0;
+        }
+
+        var currentRGB = this.hexToRgb(this.currentColor);
+        var nextRGB = this.hexToRgb(this.colors[this.nextColorIndex]);
+        var mixedColor = 'rgb(' +
+            ((1 - this.changeRatio) * currentRGB.r + this.changeRatio * nextRGB.r) + ',' +
+            ((1 - this.changeRatio) * currentRGB.g + this.changeRatio * nextRGB.g) + ',' +
+            ((1 - this.changeRatio) * currentRGB.b + this.changeRatio * nextRGB.b) + ')';
+
+        this.context.fillStyle = mixedColor;
+        this.context.fillRect(this.x, this.y, this.SIZE, this.SIZE);
+    },
+    hexToRgb: function (hex) {
+        var bigint = parseInt(hex.substring(1), 16);
+        return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+};
+
+var FIREWORK = function (width, height) {
+    this.width = width;
+    this.height = height;
+    this.colors = ['#ff7f7f', '#7fbfff', '#7fff7f', '#ffff7f'];
+    this.init();
+};
+
+FIREWORK.prototype = {
+    SIZE: 5,
+    SPEED: 0.6,
+    GRAVITY: 0.003,
+    LIFETIME: 500,
+    COUNT: 200,
+    init: function () {
+        this.x = Math.random() * this.width;
+        this.y = Math.random() * this.height / 2;
+        this.vx = (Math.random() - 0.5) * this.SPEED;
+        this.vy = (Math.random() - 0.5) * this.SPEED;
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.age = 0;
+        this.particles = [];
+
+        for (var i = 0; i < this.COUNT; i++) {
+            var angle = 2 * Math.PI * i / this.COUNT,
+                speed = Math.random() * this.SPEED;
+
+            this.particles.push({
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: Math.random() * this.SIZE
+            });
+        }
+    },
+    render: function (context) {
+        var x = this.x += this.vx,
+            y = this.y += this.vy,
+            particles = this.particles;
+
+        this.vy += this.GRAVITY;
+
+        for (var i = 0, length = particles.length; i < length; i++) {
+            var particle = particles[i];
+            context.fillStyle = this.color;
+            context.fillRect(x + particle.vx * this.age, y + particle.vy * this.age + this.GRAVITY * Math.pow(this.age, 2) / 2, particle.size, particle.size);
+        }
+        return this.LIFETIME > this.age++;
+    }
+};
+
+$(function () {
+    RENDERER.init();
+});
+
+document.getElementById('sectorForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    let sector = document.getElementById('sector').value;
+
+    const googleSectors = ["617", "622", "632", "687", "690", "711", "712", "714", "717", "795", "802", "828"];
+    const pudimSectors = ["618", "718", "689", "614", "785", "715", "685", "612", "610", "627", "738", "691", "615", "639", "624", "710", "625"];
+    const bingSectors = ["720", "611", "730", "713", "716", "725", "631", "616", "623", "826", "727", "737", "620", "637", "833", "638", "613", "630", "739", "722", "724", "629", "732", "729", "731", "723"];
+
+    if (googleSectors.includes(sector) || pudimSectors.includes(sector) || bingSectors.includes(sector)) {
+        // Mudar o conteúdo do container e adicionar contador
+        document.querySelector('.container').innerHTML = "<h2>Verificando seu setor, você será levado para a reunião em breve...</h2><span id='counter'>5</span> segundos...";
+
+        let counter = 4;
+        let countdown = setInterval(function() {
+            document.getElementById('counter').innerText = counter;
+            counter--;
+
+            if (counter < 0) {
+                clearInterval(countdown);
+            }
+        }, 1000); // atualiza a cada segundo
+
+        setTimeout(function() {
+            if (googleSectors.includes(sector)) {
+                window.location.href = "https://www.google.com";
+            } else if (pudimSectors.includes(sector)) {
+                window.location.href = "https://www.pudim.com.br";
+            } else if (bingSectors.includes(sector)) {
+                window.location.href = "https://www.bing.com.br";
+            }
+        }, 5000); // 5 segundos de delay
+    } else {
+        alert("Setor inválido, verifique e tente novamente.");
+    }
+});
+
+
+
+    </script>
+</body>
+
+</html>
