@@ -28,11 +28,12 @@
 
 
         body {
+            position: relative; /* Adicione esta linha */
             font-family: Arial, sans-serif;
             background: linear-gradient(#0a1532 60%, #2c95c0);
             color: #FFF;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             height: 100vh;
             overflow: hidden;
@@ -53,17 +54,20 @@
             max-width: 90%;
             height: auto;
             margin: 0; /* Removido a margem automática */
+            z-index: 1;  /* Adicione esta linha */
+    		position: relative;  /* Adicione esta linha */
         }
 
         .container {
             border-radius: 5px;
             padding: 20px;
             background-color: rgba(0, 64, 128, 0.7);
-            width: 80%;
             max-width: 600px;
             position: relative;
             z-index: 1;
             text-align: center;
+            z-index: 2;  /* Adicione esta linha */
+
         }
 
         .btn {
@@ -97,6 +101,7 @@
         flex-direction: column; /* Alinha verticalmente para dispositivos móveis */
         align-items: flex-start; /* Alinha o conteúdo ao topo */
         padding-top: 20px; /* Um pequeno espaço no topo para não ficar muito colado */
+        top: 0; /* Adicione esta linha */
     }
     img {
         margin: 10px auto; /* Adiciona a margem de volta para dispositivos móveis */
