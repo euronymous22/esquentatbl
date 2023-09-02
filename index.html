@@ -36,7 +36,7 @@
             justify-content: flex-start;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            overflow: auto;
             flex-direction: row; /* Alinha horizontalmente no padrão desktop */
         }
 
@@ -98,6 +98,7 @@
 /* Media Query para telas menores ou iguais a 768px */
 @media (max-width: 768px) {
     body {
+        justify-content: flex-start; /* Certifique-se de que o conteúdo está alinhado ao topo */
         flex-direction: column; /* Alinha verticalmente para dispositivos móveis */
         align-items: flex-start; /* Alinha o conteúdo ao topo */
         padding-top: 20px; /* Um pequeno espaço no topo para não ficar muito colado */
