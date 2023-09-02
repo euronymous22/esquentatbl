@@ -95,6 +95,8 @@
 @media (max-width: 768px) {
     body {
         flex-direction: column; /* Alinha verticalmente para dispositivos móveis */
+        align-items: flex-start; /* Alinha o conteúdo ao topo */
+        padding-top: 20px; /* Um pequeno espaço no topo para não ficar muito colado */
     }
     img {
         margin: 10px auto; /* Adiciona a margem de volta para dispositivos móveis */
@@ -102,13 +104,14 @@
     input[type="tel"] {
         font-size: 16px;  /* Definir o tamanho da fonte para 16px */
     }
-  .footer-credits {
+    .footer-credits {
         position: static;
         bottom: unset;
         left: unset;
         transform: none;
     }
 }
+
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
