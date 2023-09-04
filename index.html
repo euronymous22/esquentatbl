@@ -302,40 +302,50 @@
             }
         });
 
-        document.getElementById('sectorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let sector = document.getElementById('sector').value;
+document.getElementById('sectorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let sector = document.getElementById('sector').value;
 
-            if (googleSectors.includes(sector) || pudimSectors.includes(sector) || bingSectors.includes(sector)) {
-                // Definindo o cookie
-                document.cookie = "setor=" + sector + "; max-age=31536000"; // 1 ano de validade
+    let meetingTimeMessage = ""; // A mensagem sobre o horário da reunião
 
-                // Mudar o conteúdo do container e adicionar contador
-                document.querySelector('.container').innerHTML = "<h2>Verificando seu setor, você será levado para a reunião em breve...</h2><span id='counter'>5</span> segundos...";
+    if (googleSectors.includes(sector)) {
+        meetingTimeMessage = "Sua reunião está programada para iniciar às 09h00.";
+    } else if (pudimSectors.includes(sector)) {
+        meetingTimeMessage = "Sua reunião está programada para iniciar às 09h45.";
+    } else if (bingSectors.includes(sector)) {
+        meetingTimeMessage = "Sua reunião está programada para iniciar às 10h30.";
+    }
 
-                let counter = 4;
-                let countdown = setInterval(function() {
-                    document.getElementById('counter').innerText = counter;
-                    counter--;
+    if (meetingTimeMessage) {
+        // Definindo o cookie
+        document.cookie = "setor=" + sector + "; max-age=31536000"; // 1 ano de validade
 
-                    if (counter < 0) {
-                        clearInterval(countdown);
-                    }
-                }, 1000); // atualiza a cada segundo
+        // Mudar o conteúdo do container e adicionar contador
+        document.querySelector('.container').innerHTML = `<h2>Verificando seu setor, você será levado para a reunião em breve...</h2><span id='counter'>5</span> segundos...<br><br>${meetingTimeMessage}`;
 
-                setTimeout(function() {
-                    if (googleSectors.includes(sector)) {
-                        window.location.href = "https://zoom.us/j/92172011339?pwd=c2JIUDhhZHl2OUhMclZjU2lUcFZsdz09";
-                    } else if (pudimSectors.includes(sector)) {
-                        window.location.href = "https://zoom.us/j/91068745833?pwd=akRabEdwYnBwTU1CaE94U2t5YVhGUT09";
-                    } else if (bingSectors.includes(sector)) {
-                        window.location.href = "https://zoom.us/j/99549985184?pwd=Tm1hOVZrK2I5SjI1UXNOa0NzTTdxQT09";
-                    }
-                }, 5000); // 5 segundos de delay
-            } else {
-                alert("Setor inválido, verifique e tente novamente.");
+        let counter = 4;
+        let countdown = setInterval(function() {
+            document.getElementById('counter').innerText = counter;
+            counter--;
+
+            if (counter < 0) {
+                clearInterval(countdown);
             }
-        });
+        }, 1000); // atualiza a cada segundo
+
+        setTimeout(function() {
+            if (googleSectors.includes(sector)) {
+                window.location.href = "https://zoom.us/j/92172011339?pwd=c2JIUDhhZHl2OUhMclZjU2lUcFZsdz09";
+            } else if (pudimSectors.includes(sector)) {
+                window.location.href = "https://zoom.us/j/91068745833?pwd=akRabEdwYnBwTU1CaE94U2t5YVhGUT09";
+            } else if (bingSectors.includes(sector)) {
+                window.location.href = "https://zoom.us/j/99549985184?pwd=Tm1hOVZrK2I5SjI1UXNOa0NzTTdxQT09";
+            }
+        }, 5000); // 5 segundos de delay
+    } else {
+        alert("Setor inválido, verifique e tente novamente.");
+    }
+});
 
         function getCookie(name) {
             let value = "; " + document.cookie;
